@@ -2,11 +2,15 @@
 
 This README contains instructions on how to use the backend part of the BTC price prediction project.
 
+[App URL](https://d386ooxqoh3yz8.cloudfront.net).
+
 ## Project Overview and Architecture
 
 The project was created using AWS technologies, including **API Gateway, Lambdas, DynamoDB, SQS**, and was deployed with **AWS CDK**.
 
-![Alt text](image.png)
+The [app](https://d386ooxqoh3yz8.cloudfront.net) is currently hosted on **S3**.
+
+![system architecture](image.png)
 
 The aim was to develop a system that allows users to make predictions on the price of BTC one minute into the future. API Gateway exposes several endpoints covering main functionality such as generating a user ID, retrieving user details and score, and placing a prediction.
 
