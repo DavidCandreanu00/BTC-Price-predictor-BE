@@ -52,7 +52,7 @@ Similar to the frontend part, time constraints limited the scope of this project
 
 - **Unit Testing**: Use Jest to create unit tests for the utils functions, lambda handlers, and to check if the AWS stack is successfully deployed.
 - **Automated Build and Deployment**: Utilize git actions or an alternative to build and redeploy the project programmatically.
-- **User Authentication and Authorization**: Implement AWS Cognito to handle user authentication and authorization for better security and authentication mechanism for the frontend.
+- **User Authentication and Authorization**: AWS Cognito could be used to handle user authentication and authorisation. This could ensure security for the API requests, as well as provide a better authentication mechanism for the FE than simply utilising local storage to save user IDs.
 
 ## Frontend
 
