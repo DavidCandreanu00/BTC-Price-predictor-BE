@@ -24,6 +24,7 @@
     "aws-cdk-lib": "2.130.0",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1569.0",
+    "aws-sdk-mock": "^5.9.0",
     "constructs": "^10.0.0"
   }
 }

@@ -1,7 +1,9 @@
 import * as AWS from 'aws-sdk';
 import {updateScore, updateStatus} from "./utils/awsUtilsFunctions";
+import {fetchBTCPrice} from "./utils/btcUtilsFunctions";
 
-const tableName = process.env.USERS_DB_TABLE;
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+const tableName = process.env.USERS_DB_TABLE || '';
 
 export const handler = async (event: any) => {
 
@@ -10,30 +12,32 @@ export const handler = async (event: any) => {
         const message = JSON.parse(record.body);
 
         const userId = message.userId;
-        const action = message.action;
+        const prediction = message.prediction;
+        const bctPriceAtBetTime = message.btcPrice;
 
         try {
-            const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-            if (!tableName) {
-                throw new Error('tableName not provided');
+            if (!userId || !prediction) {
+                throw new Error('userId or prediction not provided in the message');
             }
 
-            if (!userId || !action) {
-                throw new Error('userId or action not provided in the message');
-            }
+            const btcPrice = await fetchBTCPrice();
 
-            if (action === 'add') {
-                await updateScore(dynamodb, userId, 1, tableName);
-            } else if (action === 'subtract') {
-                await updateScore(dynamodb, userId, -1, tableName);
+            if (prediction === 'up') {
+                btcPrice >= bctPriceAtBetTime ?
+                    await updateScore(dynamodb, userId, 1, tableName) :
+                    await updateScore(dynamodb, userId, -1, tableName);
+            } else if (prediction === 'down') {
+                btcPrice < bctPriceAtBetTime ?
+                    await updateScore(dynamodb, userId, 1, tableName) :
+                    await updateScore(dynamodb, userId, -1, tableName);
             } else {
-                throw new Error(`Invalid action: ${action}`);
+                throw new Error(`Invalid prediction: ${prediction}`);
             }
 
             await updateStatus(dynamodb, userId, 'open', tableName);
 
             console.log(`Updated score and status for user ${userId}`);
+            console.log(`Prediction: ${prediction}, price on prediction: ${bctPriceAtBetTime}, actual price: ${btcPrice}.`);
         } catch (error) {
             console.error('Error processing message:', error);
         }
